@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter Serp Project Bootstrap"
+  short_description: "Create new Flutter apps with Serp architecture"
+  default_prompt: "Use $flutter-serp-project-bootstrap to create a new Flutter project with app/core/shared/features structure, flavors, launcher icons, and the Serp dependency stack."

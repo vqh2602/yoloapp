@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build APK - chọn flavor",
+            "type": "shell",
+            "command": "flutter build apk --flavor ${input:flavor} -t lib/main_${input:flavor}.dart --split-per-abi"
+        },
+        {
+            "label": "Build AAB - chọn flavor",
+            "type": "shell",
+            "command": "flutter build appbundle --flavor ${input:flavor} -t lib/main_${input:flavor}.dart"
+        },
+        {
+            "label": "Build IPA - chọn flavor",
+            "type": "shell",
+            "command": "flutter build ipa --flavor ${input:flavor} -t lib/main_${input:flavor}.dart"
+        },
+        {
+            "label": "Run Translation Tools",
+            "type": "shell",
+            "command": "./scripts/translations.sh ${input:transArg}"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "flavor",
+            "description": "Chọn flavor muốn build (dev, uat, prod...)",
+            "type": "pickString",
+            "options": [
+                "dev",
+                "uat",
+                "prod"
+            ],
+            "default": "dev"
+        },
+        {
+            "id": "transArg",
+            "description": "Nhập argument cho translation tool (optional)",
+            "default": "",
+            "type": "promptString"
+        }
+    ]
+}

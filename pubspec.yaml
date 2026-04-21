@@ -1,0 +1,78 @@
+name: yoloapp
+description: "YOLO camera and single-image demo built with a Serp-style Flutter structure."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  file_picker: ^11.0.2
+  get: ^4.7.3
+  google_fonts: ^8.0.2
+  image_picker: ^1.2.1
+  logger: ^2.7.0
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  ultralytics_yolo: ^0.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_flavorizr: ^2.4.2
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/logo/
+    - assets/models/
+
+flavorizr:
+  flavors:
+    dev:
+      app:
+        name: "YoloApp Dev"
+        icon: assets/logo/logo.png
+      android:
+        applicationId: "com.bachkhoa.yoloapp"
+      ios:
+        bundleId: "com.bachkhoa.yoloapp"
+    uat:
+      app:
+        name: "YoloApp UAT"
+        icon: assets/logo/logo.png
+      android:
+        applicationId: "com.bachkhoa.yoloapp"
+      ios:
+        bundleId: "com.bachkhoa.yoloapp"
+    prod:
+      app:
+        name: "YoloApp"
+        icon: assets/logo/logo.png
+      android:
+        applicationId: "com.bachkhoa.yoloapp"
+      ios:
+        bundleId: "com.bachkhoa.yoloapp"
+
+false_secrets:
+  - /**/google-services.json
+  - /**/GoogleService-Info.plist
+  - /**/service_account.json
+  - /**/firebase_options.dart
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/logo/logo.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/logo/logo.png"
+  min_sdk_android: 24

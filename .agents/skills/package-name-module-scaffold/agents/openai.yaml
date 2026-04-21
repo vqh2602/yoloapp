@@ -1,0 +1,4 @@
+interface:
+  display_name: "package_name Module Scaffold"
+  short_description: "Scaffold GetX screen modules for package_name"
+  default_prompt: "Use $package-name-module-scaffold to create a new package_name screen module with screen, controller, binding, widgets, and route wiring."
