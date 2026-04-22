@@ -6,10 +6,8 @@ import 'package:yoloapp/app/routes/routes.dart';
 import 'package:yoloapp/app/translations/app_translations.dart';
 import 'package:yoloapp/shared/theme/app_theme.dart';
 
-/// Root application widget.
+/// Widget ứng dụng gốc.
 ///
-/// The project follows a Serp-style structure, so top-level app composition
-/// stays inside `lib/app/` while features live in `lib/features/`.
 class YoloApplication extends StatelessWidget {
   const YoloApplication({super.key});
 

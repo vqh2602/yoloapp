@@ -5,7 +5,7 @@ import 'package:path/path.dart' as path;
 import 'package:yoloapp/core/constants/app_constants.dart';
 import 'package:yoloapp/core/models/yolo_model_descriptor.dart';
 
-/// Opens the native file picker and validates custom model extensions.
+/// Mở trình chọn tệp gốc và xác thực các phần mở rộng model tùy chỉnh.
 class YoloModelFileService {
   Future<YoloModelDescriptor?> pickModelFile() async {
     final result = await FilePicker.pickFiles(

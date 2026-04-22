@@ -5,7 +5,7 @@ import 'package:yoloapp/core/models/yolo_capture_mode.dart';
 import 'package:yoloapp/features/yolo_lab/yolo_lab_controller.dart';
 import 'package:yoloapp/shared/widgets/section_card.dart';
 
-/// Displays the latest inference results from the active mode.
+/// Hiển thị các kết quả suy luận mới nhất từ chế độ hiện tại.
 class ResultListPanel extends GetView<YoloLabController> {
   const ResultListPanel({super.key});
 

@@ -5,11 +5,11 @@ import 'package:ultralytics_yolo/ultralytics_yolo.dart';
 import 'package:yoloapp/core/models/yolo_image_inference_result.dart';
 import 'package:yoloapp/core/models/yolo_model_descriptor.dart';
 
-/// Handles single-image inference and keeps one reusable YOLO instance alive.
+/// Xử lý suy luận hình ảnh đơn lẻ và duy trì một thực thể YOLO có thể tái sử dụng.
 ///
-/// The service recreates the native model only when the model path, task, or GPU
-/// setting changes. This keeps UI code small and avoids accidental duplicate
-/// initializations from widget rebuilds.
+/// Dịch vụ chỉ tạo lại model gốc khi đường dẫn model, task hoặc cài đặt GPU
+/// thay đổi. Điều này giúp mã UI nhỏ gọn và tránh việc khởi tạo trùng lặp
+/// không mong muốn từ việc build lại widget.
 class YoloImageInferenceService {
   YoloImageInferenceService({required Logger logger}) : _logger = logger;
 

@@ -5,7 +5,7 @@ import 'package:yoloapp/app/config/environment_uat.dart' as env_uat;
 import 'package:yoloapp/flavors.dart';
 
 Future<EnvironmentBase> updateRemoteConfig(EnvironmentBase config) async {
-  // Firebase Remote Config is intentionally not enabled in this bootstrap.
+  // Firebase Remote Config cố tình không được kích hoạt trong bản bootstrap này.
   return config;
 }
 

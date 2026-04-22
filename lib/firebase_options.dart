@@ -1,4 +1,4 @@
-// Firebase is intentionally not configured for this bootstrap.
+// Firebase cố tình không được cấu hình cho bản bootstrap này.
 //
-// The file exists to keep the Serp-style project tree stable if Firebase
-// integration is added later.
+// Tệp này tồn tại để giữ cho cấu trúc dự án kiểu Serp ổn định nếu việc
+// tích hợp Firebase được thêm vào sau này.

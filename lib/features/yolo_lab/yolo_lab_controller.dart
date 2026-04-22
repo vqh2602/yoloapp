@@ -17,10 +17,10 @@ import 'package:yoloapp/core/services/yolo_model_file_service.dart';
 
 enum ModelLoadState { empty, selected, preparing, ready, failed }
 
-/// Main feature controller.
+/// Controller chính của tính năng.
 ///
-/// The controller owns presentation state, delegates heavy work to services, and
-/// keeps the screen widgets focused on rendering only.
+/// Controller nắm giữ trạng thái hiển thị, ủy thác các công việc nặng cho các dịch vụ,
+/// và giữ cho các widget màn hình chỉ tập trung vào việc render.
 class YoloLabController extends GetxController {
   YoloLabController({
     required ImagePicker imagePicker,
@@ -42,8 +42,8 @@ class YoloLabController extends GetxController {
       TextEditingController();
   Timer? _modelPreparationTimer;
 
-  // Keep the app in image mode by default so the camera view is only created
-  // after the user explicitly switches to the camera tab.
+  // Giữ ứng dụng ở chế độ hình ảnh theo mặc định để view camera chỉ được tạo
+  // sau khi người dùng chuyển sang tab camera một cách rõ ràng.
   final Rx<YoloCaptureMode> captureMode = YoloCaptureMode.image.obs;
   final Rx<YOLOTask> selectedTask = YOLOTask.detect.obs;
   final Rx<YoloModelDescriptor> selectedModel = YoloModelDescriptor.empty().obs;

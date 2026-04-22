@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-/// Minimal translation shell to keep the bootstrap structure ready for future i18n.
+/// Cấu trúc dịch thuật tối giản để giữ cho cấu trúc bootstrap sẵn sàng cho i18n trong tương lai.
 class AppTranslations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => const {

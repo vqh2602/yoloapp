@@ -1,6 +1,6 @@
 import 'package:yoloapp/app/config/configurations.dart';
 
-/// Thin typed base class for flavor-specific environment files.
+/// Lớp cơ sở định kiểu mỏng cho các tệp môi trường cụ thể theo flavor.
 class EnvironmentBase extends EnvironmentConfig {
   const EnvironmentBase({
     required super.appName,

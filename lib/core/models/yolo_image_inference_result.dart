@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:ultralytics_yolo/ultralytics_yolo.dart';
 
-/// Parsed result returned by the single-image inference service.
+/// Kết quả đã phân tích được trả về bởi dịch vụ suy luận hình ảnh đơn lẻ.
 class YoloImageInferenceResult {
   const YoloImageInferenceResult({
     required this.originalImage,

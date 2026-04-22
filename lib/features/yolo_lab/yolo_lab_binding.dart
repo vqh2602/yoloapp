@@ -5,7 +5,7 @@ import 'package:yoloapp/core/services/yolo_image_inference_service.dart';
 import 'package:yoloapp/core/services/yolo_model_file_service.dart';
 import 'package:yoloapp/features/yolo_lab/yolo_lab_controller.dart';
 
-/// Feature-owned binding that wires controller dependencies from the app locator.
+/// Binding thuộc sở hữu của tính năng, kết nối các phụ thuộc của controller từ app locator.
 class YoloLabBinding extends Bindings {
   @override
   void dependencies() {

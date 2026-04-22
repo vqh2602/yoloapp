@@ -10,7 +10,7 @@ import 'package:yoloapp/features/yolo_lab/widgets/result_list_panel.dart';
 import 'package:yoloapp/shared/theme/app_theme.dart';
 import 'package:yoloapp/shared/widgets/section_card.dart';
 
-/// Landing page of the demo app.
+/// Trang chính của ứng dụng demo.
 class YoloLabPage extends GetView<YoloLabController> {
   const YoloLabPage({super.key});
 
@@ -19,19 +19,14 @@ class YoloLabPage extends GetView<YoloLabController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(Env.config.appName),
-      ),
+      appBar: AppBar(title: Text(Env.config.appName)),
       body: Obx(() {
         final isWide = MediaQuery.sizeOf(context).width >= 1080;
 
         return DecoratedBox(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xFFF6F2E7),
-                Color(0xFFE7F3F1),
-              ],
+              colors: [Color(0xFFF6F2E7), Color(0xFFE7F3F1)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -84,7 +79,9 @@ class YoloLabPage extends GetView<YoloLabController> {
                               icon: Icon(Icons.photo_library_outlined),
                             ),
                           ],
-                          selected: <YoloCaptureMode>{controller.captureMode.value},
+                          selected: <YoloCaptureMode>{
+                            controller.captureMode.value,
+                          },
                           onSelectionChanged: (selection) {
                             controller.changeCaptureMode(selection.first);
                           },
@@ -93,10 +90,11 @@ class YoloLabPage extends GetView<YoloLabController> {
                           const SizedBox(height: 16),
                           Text(
                             controller.errorMessage.value!,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppColors.danger,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: AppColors.danger,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ],
                         const SizedBox(height: 12),
@@ -123,10 +121,7 @@ class YoloLabPage extends GetView<YoloLabController> {
                           ),
                         ),
                         const SizedBox(width: 20),
-                        const Expanded(
-                          flex: 3,
-                          child: ResultListPanel(),
-                        ),
+                        const Expanded(flex: 3, child: ResultListPanel()),
                       ],
                     )
                   else

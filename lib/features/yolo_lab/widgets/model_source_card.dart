@@ -6,7 +6,7 @@ import 'package:yoloapp/core/utils/formatters.dart';
 import 'package:yoloapp/features/yolo_lab/yolo_lab_controller.dart';
 import 'package:yoloapp/shared/widgets/section_card.dart';
 
-/// Controls for switching task, official model, custom file, and thresholds.
+/// Các điều khiển để chuyển đổi task, model chính thức, tệp tùy chỉnh và các ngưỡng.
 class ModelSourceCard extends GetView<YoloLabController> {
   const ModelSourceCard({super.key});
 
@@ -57,8 +57,11 @@ class ModelSourceCard extends GetView<YoloLabController> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    initialValue: controller.selectedOfficialModelId != null &&
-                            officialModels.contains(controller.selectedOfficialModelId)
+                    initialValue:
+                        controller.selectedOfficialModelId != null &&
+                            officialModels.contains(
+                              controller.selectedOfficialModelId,
+                            )
                         ? controller.selectedOfficialModelId
                         : null,
                     decoration: const InputDecoration(
@@ -87,7 +90,9 @@ class ModelSourceCard extends GetView<YoloLabController> {
                 FilledButton.tonalIcon(
                   onPressed: officialModels.isEmpty
                       ? null
-                      : () => controller.selectOfficialModel(officialModels.first),
+                      : () => controller.selectOfficialModel(
+                          officialModels.first,
+                        ),
                   icon: const Icon(Icons.cloud_download_outlined),
                   label: const Text('Dùng official'),
                 ),
@@ -114,8 +119,16 @@ class ModelSourceCard extends GetView<YoloLabController> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      Chip(label: Text('Trạng thái ${controller.modelLoadStateLabel}')),
-                      Chip(label: Text('Task ${controller.selectedTask.value.name}')),
+                      Chip(
+                        label: Text(
+                          'Trạng thái ${controller.modelLoadStateLabel}',
+                        ),
+                      ),
+                      Chip(
+                        label: Text(
+                          'Task ${controller.selectedTask.value.name}',
+                        ),
+                      ),
                       Chip(
                         label: Text(
                           controller.captureMode.value == YoloCaptureMode.camera
@@ -152,9 +165,11 @@ class ModelSourceCard extends GetView<YoloLabController> {
               keyboardType: TextInputType.url,
               autocorrect: false,
               enableSuggestions: false,
+              maxLines: 3,
               decoration: const InputDecoration(
                 labelText: 'Remote model URL',
-                hintText: 'Android: .../model.tflite | iOS: .../model.mlpackage.zip',
+                hintText:
+                    'Android: .../model.tflite | iOS: .../model.mlpackage.zip',
               ),
               onSubmitted: controller.applyRemoteModelUrl,
             ),

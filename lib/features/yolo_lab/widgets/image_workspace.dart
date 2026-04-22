@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:yoloapp/features/yolo_lab/yolo_lab_controller.dart';
 import 'package:yoloapp/shared/widgets/section_card.dart';
 
-/// Single-image inference workspace.
+/// Không gian làm việc suy luận hình ảnh đơn lẻ.
 class ImageWorkspace extends GetView<YoloLabController> {
   const ImageWorkspace({super.key});
 

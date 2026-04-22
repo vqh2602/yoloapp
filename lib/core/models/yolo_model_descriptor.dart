@@ -1,6 +1,6 @@
 enum YoloModelSourceType { none, official, localFile, remoteUrl }
 
-/// Describes the active model source used by both image and camera flows.
+/// Mô tả nguồn model hiện tại được sử dụng bởi cả luồng hình ảnh và camera.
 class YoloModelDescriptor {
   const YoloModelDescriptor({
     required this.label,

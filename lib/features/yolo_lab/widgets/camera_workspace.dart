@@ -4,7 +4,7 @@ import 'package:ultralytics_yolo/ultralytics_yolo.dart';
 import 'package:yoloapp/features/yolo_lab/yolo_lab_controller.dart';
 import 'package:yoloapp/shared/widgets/section_card.dart';
 
-/// Live camera panel backed by `YOLOView`.
+/// Bảng điều khiển camera trực tiếp được hỗ trợ bởi `YOLOView`.
 class CameraWorkspace extends GetView<YoloLabController> {
   const CameraWorkspace({super.key});
 
@@ -24,8 +24,14 @@ class CameraWorkspace extends GetView<YoloLabController> {
               spacing: 10,
               runSpacing: 10,
               children: [
-                Chip(label: Text('Camera đang dùng: ${controller.activeModelSummary}')),
-                Chip(label: Text('Trạng thái: ${controller.modelLoadStateLabel}')),
+                Chip(
+                  label: Text(
+                    'Camera đang dùng: ${controller.activeModelSummary}',
+                  ),
+                ),
+                Chip(
+                  label: Text('Trạng thái: ${controller.modelLoadStateLabel}'),
+                ),
               ],
             ),
             const SizedBox(height: 12),

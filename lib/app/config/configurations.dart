@@ -1,4 +1,4 @@
-/// Global access point for the active environment configuration.
+/// Điểm truy cập toàn cục cho cấu hình môi trường hiện tại.
 class Env {
   static late EnvironmentConfig config;
 
@@ -7,7 +7,7 @@ class Env {
   }
 }
 
-/// Shared app configuration used by all flavors.
+/// Cấu hình ứng dụng dùng chung cho tất cả các flavor.
 class EnvironmentConfig {
   const EnvironmentConfig({
     required this.appName,

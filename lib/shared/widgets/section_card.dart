@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Shared elevated section wrapper used across the home screen.
+/// Wrapper phần nội dung nổi dùng chung trên màn hình chính.
 class SectionCard extends StatelessWidget {
   const SectionCard({
     super.key,
