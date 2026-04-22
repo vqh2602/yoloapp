@@ -38,15 +38,15 @@ class YoloLabController extends GetxController {
   final YoloModelFileService _modelFileService;
 
   final YOLOViewController cameraController = YOLOViewController();
-  final TextEditingController remoteModelUrlController = TextEditingController();
+  final TextEditingController remoteModelUrlController =
+      TextEditingController();
   Timer? _modelPreparationTimer;
 
   // Keep the app in image mode by default so the camera view is only created
   // after the user explicitly switches to the camera tab.
   final Rx<YoloCaptureMode> captureMode = YoloCaptureMode.image.obs;
   final Rx<YOLOTask> selectedTask = YOLOTask.detect.obs;
-  final Rx<YoloModelDescriptor> selectedModel =
-      YoloModelDescriptor.empty().obs;
+  final Rx<YoloModelDescriptor> selectedModel = YoloModelDescriptor.empty().obs;
 
   final RxDouble confidenceThreshold =
       AppConstants.defaultConfidenceThreshold.obs;
@@ -285,8 +285,7 @@ class YoloLabController extends GetxController {
     activeModel.value = null;
     modelLoadState.value = ModelLoadState.selected;
     errorMessage.value = null;
-    statusMessage.value =
-        resolvedRemoteUrl == input
+    statusMessage.value = resolvedRemoteUrl == input
         ? 'Đã chọn model từ URL. Plugin sẽ tải model vào app storage trước khi load.'
         : 'Đã chọn model từ URL. App đã thêm marker để tránh plugin nhận nhầm đây là official model.';
 
@@ -303,7 +302,8 @@ class YoloLabController extends GetxController {
 
   Future<void> runImageInference() async {
     if (!hasSelectedModel) {
-      errorMessage.value = 'Hãy nạp model từ tệp hoặc chọn official model trước.';
+      errorMessage.value =
+          'Hãy nạp model từ tệp hoặc chọn official model trước.';
       return;
     }
 
@@ -529,7 +529,9 @@ class YoloLabController extends GetxController {
     final raw = error.toString();
 
     if (raw.contains('HTTP 404') ||
-        raw.contains('Failed to download model from https://github.com/ultralytics/yolo-flutter-app/releases')) {
+        raw.contains(
+          'Failed to download model from https://github.com/ultralytics/yolo-flutter-app/releases',
+        )) {
       return 'Official model download đang lỗi upstream: GitHub release `v0.3.0` không có file model tương ứng nên trả 404. Hãy dùng `Nạp từ tệp` với model local.';
     }
 
@@ -550,8 +552,7 @@ class YoloLabController extends GetxController {
       return 'Không tải được model từ URL đã nhập. Hãy kiểm tra link trực tiếp tới file model và quyền truy cập mạng.';
     }
 
-    if (raw.contains('Failed to extract') &&
-        raw.contains('.mlpackage.zip')) {
+    if (raw.contains('Failed to extract') && raw.contains('.mlpackage.zip')) {
       return 'Không giải nén được CoreML package. File URL phải là một `.mlpackage.zip` hợp lệ và sau khi giải nén phải có `Manifest.json` ở root của package. Hãy zip cả thư mục `*.mlpackage`, không zip riêng file bên trong.';
     }
 
@@ -629,9 +630,13 @@ class YoloLabController extends GetxController {
   Future<String?> _validateRemoteModelUrl(Uri uri) async {
     final client = HttpClient();
     try {
-      final request = await client.getUrl(uri).timeout(const Duration(seconds: 8));
+      final request = await client
+          .getUrl(uri)
+          .timeout(const Duration(seconds: 8));
       request.followRedirects = true;
-      final response = await request.close().timeout(const Duration(seconds: 8));
+      final response = await request.close().timeout(
+        const Duration(seconds: 8),
+      );
       await response.drain<void>();
 
       if (response.statusCode < 200 || response.statusCode >= 300) {

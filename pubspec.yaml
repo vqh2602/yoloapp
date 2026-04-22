@@ -20,6 +20,7 @@ dependencies:
   path: ^1.9.1
   path_provider: ^2.1.5
   ultralytics_yolo: ^0.3.0
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:
@@ -72,7 +73,7 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/logo/logo.png"
+  image_path: "assets/logo/logo.jpg"
   adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/logo/logo.png"
+  adaptive_icon_foreground: "assets/logo/logo.jpg"
   min_sdk_android: 24
