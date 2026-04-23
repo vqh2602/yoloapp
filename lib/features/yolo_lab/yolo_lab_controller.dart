@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -16,6 +16,8 @@ import 'package:yoloapp/core/services/yolo_image_inference_service.dart';
 import 'package:yoloapp/core/services/yolo_model_file_service.dart';
 
 enum ModelLoadState { empty, selected, preparing, ready, failed }
+
+enum ModelInputSource { asset, localFile, remoteUrl }
 
 /// Controller chính của tính năng.
 ///
@@ -47,6 +49,8 @@ class YoloLabController extends GetxController {
   final Rx<YoloCaptureMode> captureMode = YoloCaptureMode.image.obs;
   final Rx<YOLOTask> selectedTask = YOLOTask.detect.obs;
   final Rx<YoloModelDescriptor> selectedModel = YoloModelDescriptor.empty().obs;
+  final Rx<ModelInputSource> selectedInputSource = ModelInputSource.asset.obs;
+  final RxList<String> bundledAssetModels = <String>[].obs;
 
   final RxDouble confidenceThreshold =
       AppConstants.defaultConfidenceThreshold.obs;
@@ -73,23 +77,9 @@ class YoloLabController extends GetxController {
 
   List<YOLOTask> get availableTasks => YOLOTask.values;
 
-  List<String> get officialModelsForSelectedTask {
-    final models = YOLO.officialModels(task: selectedTask.value);
-    if (models.isNotEmpty) {
-      return models;
-    }
-
-    final fallback = YOLO.defaultOfficialModel(task: selectedTask.value);
-    return fallback == null ? const <String>[] : <String>[fallback];
-  }
-
-  String? get selectedOfficialModelId {
-    if (!selectedModel.value.isOfficial || selectedModel.value.isEmpty) {
-      return null;
-    }
-
-    return selectedModel.value.path;
-  }
+  List<String> get assetModelsForCurrentPlatform => bundledAssetModels
+      .where(_isSupportedModelPathForCurrentPlatform)
+      .toList(growable: false);
 
   String get activeImageLabel {
     return selectedImageName.value ?? 'Chưa có ảnh';
@@ -134,20 +124,20 @@ class YoloLabController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    statusMessage.value =
-        'Hãy nạp model từ tệp trước. Official model của upstream hiện có thể trả 404.';
+    statusMessage.value = 'Chọn model từ assets, URL hoặc tệp cục bộ.';
+    unawaited(_loadBundledAssetModels());
   }
 
   Future<void> changeCaptureMode(YoloCaptureMode mode) async {
     if (captureMode.value == mode) {
       return;
     }
-
-    if (mode == YoloCaptureMode.camera && !hasSelectedModel) {
-      errorMessage.value = 'Hãy chọn model trước khi mở camera.';
-      statusMessage.value = 'Camera chỉ mở sau khi bạn nạp model hợp lệ.';
-      return;
-    }
+    //TODO: Check model is official
+    // if (mode == YoloCaptureMode.camera && !hasSelectedModel) {
+    //   errorMessage.value = 'Hãy chọn model trước khi mở camera.';
+    //   statusMessage.value = 'Camera chỉ mở sau khi bạn nạp model hợp lệ.';
+    //   return;
+    // }
 
     captureMode.value = mode;
     errorMessage.value = null;
@@ -168,10 +158,6 @@ class YoloLabController extends GetxController {
     selectedTask.value = task;
     errorMessage.value = null;
 
-    if (selectedModel.value.isOfficial) {
-      final nextOfficial = _defaultOfficialModel(task);
-      selectedModel.value = YoloModelDescriptor.official(nextOfficial);
-    }
     modelLoadState.value = hasSelectedModel
         ? ModelLoadState.selected
         : ModelLoadState.empty;
@@ -184,17 +170,13 @@ class YoloLabController extends GetxController {
     await _reloadCameraIfNeeded();
   }
 
-  Future<void> selectOfficialModel(String? modelId) async {
-    if (modelId == null || modelId == selectedModel.value.path) {
+  void changeModelInputSource(ModelInputSource source) {
+    if (selectedInputSource.value == source) {
       return;
     }
 
-    selectedModel.value = YoloModelDescriptor.official(modelId);
-    modelLoadState.value = ModelLoadState.selected;
+    selectedInputSource.value = source;
     errorMessage.value = null;
-    statusMessage.value = 'Đang dùng model chính thức $modelId.';
-
-    await _reloadCameraIfNeeded();
   }
 
   Future<void> pickModelFile() async {
@@ -204,6 +186,7 @@ class YoloLabController extends GetxController {
         return;
       }
 
+      selectedInputSource.value = ModelInputSource.localFile;
       selectedModel.value = pickedModel;
       activeModel.value = null;
       modelLoadState.value = ModelLoadState.selected;
@@ -220,6 +203,24 @@ class YoloLabController extends GetxController {
       );
       errorMessage.value = error.toString();
     }
+  }
+
+  Future<void> selectBundledAssetModel(String? assetPath) async {
+    if (assetPath == null || assetPath == selectedModel.value.path) {
+      return;
+    }
+
+    selectedInputSource.value = ModelInputSource.asset;
+    selectedModel.value = YoloModelDescriptor.asset(
+      label: assetPath.split('/').last,
+      path: assetPath,
+    );
+    activeModel.value = null;
+    modelLoadState.value = ModelLoadState.selected;
+    errorMessage.value = null;
+    statusMessage.value = 'Đã chọn model từ assets của app.';
+
+    await _reloadCameraIfNeeded();
   }
 
   Future<void> applyRemoteModelUrl([String? rawUrl]) async {
@@ -264,17 +265,12 @@ class YoloLabController extends GetxController {
       return;
     }
 
-    modelLoadState.value = ModelLoadState.preparing;
-    statusMessage.value = 'Đang kiểm tra URL model...';
+    remoteModelUrlController.text = input;
+    selectedInputSource.value = ModelInputSource.remoteUrl;
+    modelLoadState.value = ModelLoadState.selected;
+    statusMessage.value =
+        'Đã nhận URL model. Model sẽ được tải khi bắt đầu load, có thể mất thời gian nếu mạng chậm.';
     errorMessage.value = null;
-
-    final reachableError = await _validateRemoteModelUrl(uri);
-    if (reachableError != null) {
-      modelLoadState.value = ModelLoadState.failed;
-      errorMessage.value = reachableError;
-      _showError(reachableError);
-      return;
-    }
 
     final resolvedRemoteUrl = _rewriteRemoteUrlIfNeeded(uri);
 
@@ -283,11 +279,10 @@ class YoloLabController extends GetxController {
       url: resolvedRemoteUrl,
     );
     activeModel.value = null;
-    modelLoadState.value = ModelLoadState.selected;
     errorMessage.value = null;
     statusMessage.value = resolvedRemoteUrl == input
         ? 'Đã chọn model từ URL. Plugin sẽ tải model vào app storage trước khi load.'
-        : 'Đã chọn model từ URL. App đã thêm marker để tránh plugin nhận nhầm đây là official model.';
+        : 'Đã chọn model từ URL. App đã thêm marker để tránh plugin nhận nhầm đây là asset app.';
 
     await _reloadCameraIfNeeded();
   }
@@ -302,8 +297,7 @@ class YoloLabController extends GetxController {
 
   Future<void> runImageInference() async {
     if (!hasSelectedModel) {
-      errorMessage.value =
-          'Hãy nạp model từ tệp hoặc chọn official model trước.';
+      errorMessage.value = 'Hãy chọn model từ assets, URL hoặc tệp cục bộ.';
       return;
     }
 
@@ -456,20 +450,6 @@ class YoloLabController extends GetxController {
     imageDetections.assignAll(result.detections);
   }
 
-  String _defaultOfficialModel(YOLOTask task) {
-    final defaultModel = YOLO.defaultOfficialModel(task: task);
-    if (defaultModel != null) {
-      return defaultModel;
-    }
-
-    final officialModels = YOLO.officialModels(task: task);
-    if (officialModels.isNotEmpty) {
-      return officialModels.first;
-    }
-
-    return Env.config.defaultOfficialModelId;
-  }
-
   Future<void> _reloadCameraIfNeeded({bool forceRebuild = false}) async {
     liveDetections.clear();
     currentFps.value = 0.0;
@@ -609,7 +589,7 @@ class YoloLabController extends GetxController {
   void _startPreparationWatchdog({required String timeoutMessage}) {
     _stopPreparationWatchdog();
     modelLoadState.value = ModelLoadState.preparing;
-    _modelPreparationTimer = Timer(const Duration(seconds: 20), () {
+    _modelPreparationTimer = Timer(_modelPreparationTimeout, () {
       if (modelLoadState.value != ModelLoadState.preparing) {
         return;
       }
@@ -627,32 +607,49 @@ class YoloLabController extends GetxController {
     _modelPreparationTimer = null;
   }
 
-  Future<String?> _validateRemoteModelUrl(Uri uri) async {
-    final client = HttpClient();
+  Future<void> _loadBundledAssetModels() async {
     try {
-      final request = await client
-          .getUrl(uri)
-          .timeout(const Duration(seconds: 8));
-      request.followRedirects = true;
-      final response = await request.close().timeout(
-        const Duration(seconds: 8),
-      );
-      await response.drain<void>();
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final uniqueEntries = manifest
+          .listAssets()
+          .where((assetPath) => assetPath.startsWith('assets/models/'))
+          .where(_isSupportedModelPathForCurrentPlatform)
+          .toSet()
+          .toList()
+        ..sort();
 
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        return 'URL model trả về HTTP ${response.statusCode}. Hãy kiểm tra lại link tải trực tiếp.';
+      bundledAssetModels.assignAll(uniqueEntries);
+
+      if (!hasSelectedModel && uniqueEntries.isNotEmpty) {
+        await selectBundledAssetModel(uniqueEntries.first);
       }
-
-      return null;
-    } on TimeoutException {
-      return 'URL model không phản hồi trong thời gian cho phép. Có thể link chết hoặc server quá chậm.';
-    } on SocketException {
-      return 'Không kết nối được tới URL model. Hãy kiểm tra mạng hoặc domain.';
-    } catch (_) {
-      return 'Không kiểm tra được URL model. Hãy xác nhận đây là link tải trực tiếp tới file model.';
-    } finally {
-      client.close(force: true);
+    } catch (error, stackTrace) {
+      _logger.w(
+        'Failed to load bundled asset models',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
+  }
+
+  bool _isSupportedModelPathForCurrentPlatform(String path) {
+    final lowerPath = path.toLowerCase();
+    if (Platform.isIOS) {
+      return lowerPath.endsWith('.mlpackage.zip') ||
+          lowerPath.endsWith('.mlpackage') ||
+          lowerPath.endsWith('.mlmodel') ||
+          lowerPath.endsWith('.zip');
+    }
+
+    return lowerPath.endsWith('.tflite');
+  }
+
+  Duration get _modelPreparationTimeout {
+    if (selectedModel.value.isRemoteUrl) {
+      return const Duration(seconds: 90);
+    }
+
+    return const Duration(seconds: 30);
   }
 
   String _rewriteRemoteUrlIfNeeded(Uri uri) {

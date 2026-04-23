@@ -1,4 +1,4 @@
-enum YoloModelSourceType { none, official, localFile, remoteUrl }
+enum YoloModelSourceType { none, asset, localFile, remoteUrl }
 
 /// Mô tả nguồn model hiện tại được sử dụng bởi cả luồng hình ảnh và camera.
 class YoloModelDescriptor {
@@ -16,11 +16,14 @@ class YoloModelDescriptor {
     );
   }
 
-  factory YoloModelDescriptor.official(String modelId) {
+  factory YoloModelDescriptor.asset({
+    required String label,
+    required String path,
+  }) {
     return YoloModelDescriptor(
-      label: modelId,
-      path: modelId,
-      sourceType: YoloModelSourceType.official,
+      label: label,
+      path: path,
+      sourceType: YoloModelSourceType.asset,
     );
   }
 
@@ -51,15 +54,15 @@ class YoloModelDescriptor {
   final YoloModelSourceType sourceType;
 
   bool get isEmpty => path.trim().isEmpty;
-  bool get isOfficial => sourceType == YoloModelSourceType.official;
+  bool get isAsset => sourceType == YoloModelSourceType.asset;
   bool get isRemoteUrl => sourceType == YoloModelSourceType.remoteUrl;
 
   String get sourceLabel {
     switch (sourceType) {
       case YoloModelSourceType.none:
         return 'Chưa chọn';
-      case YoloModelSourceType.official:
-        return 'Official';
+      case YoloModelSourceType.asset:
+        return 'Assets';
       case YoloModelSourceType.localFile:
         return 'Tệp cục bộ';
       case YoloModelSourceType.remoteUrl:

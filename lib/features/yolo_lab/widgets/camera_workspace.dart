@@ -73,7 +73,7 @@ class CameraWorkspace extends GetView<YoloLabController> {
                           child: Padding(
                             padding: EdgeInsets.all(24),
                             child: Text(
-                              'Chưa có model. Hãy quay lại phần Model và chọn `Nạp từ tệp`.',
+                              'Chưa có model. Hãy quay lại phần Model và chọn assets, URL hoặc tệp cục bộ.',
                               style: TextStyle(color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
